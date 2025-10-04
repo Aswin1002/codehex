@@ -1,0 +1,103 @@
+/* styles.css */
+
+/* Reset some default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body styling */
+body {
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Container for form and map */
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Heading */
+.container h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+}
+
+/* Map styling */
+#map {
+  height: 300px;
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  border: 2px solid #66a6ff;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Date input */
+form input[type="date"] {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  width: 60%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+form input[type="date"]:focus {
+  outline: none;
+  border-color: #66a6ff;
+  box-shadow: 0 0 5px #66a6ff;
+}
+
+/* Submit button */
+form button {
+  padding: 12px 25px;
+  background: #66a6ff;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+form button:hover {
+  background: #89f7fe;
+  color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #map {
+    height: 250px;
+  }
+
+  form input[type="date"] {
+    width: 80%;
+  }
+}
