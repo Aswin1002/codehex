@@ -8,13 +8,30 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let marker;
 
+// --- Helper: Reverse geocode lat/lon to location name ---
+async function getLocationName(lat, lon) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+    const data = await res.json();
+    // Choose the best available name
+    return data.address.city || data.address.town || data.address.village || data.address.state || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  } catch (err) {
+    console.error("Reverse geocoding error:", err);
+    return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  }
+}
+
 // Handle map clicks
-map.on('click', function(e) {
+map.on('click', async function(e) {
   if (marker) map.removeLayer(marker);
   marker = L.marker(e.latlng).addTo(map);
 
   document.getElementById('lat').value = e.latlng.lat;
   document.getElementById('lon').value = e.latlng.lng;
+
+  // Reverse geocode to update location input
+  const locationName = await getLocationName(e.latlng.lat, e.latlng.lng);
+  document.getElementById('location').value = locationName;
 });
 
 // --- Text location input ---

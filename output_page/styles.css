@@ -83,6 +83,20 @@ h1 {
   text-shadow: 0 0 8px rgba(0, 255, 247, 0.5);
 }
 
+/* --- Satellite / Graph Images --- */
+.card img, .card canvas {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 255, 247, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img:hover, .card canvas:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 255, 247, 0.5);
+}
+
 /* --- Animation --- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
