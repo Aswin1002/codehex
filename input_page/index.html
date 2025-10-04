@@ -3,22 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Select Location & Date</title>
+  <title>Select Location, Date & Time</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
-  <div class="container id=cntn ">
-    <h2>Pick a Location and Daate</h2>
-  <div id="map"></div>
+  <div class="container" id="cntn">
+    <h2>Pick a Location, Date & Time</h2>
+    
+    <!-- Map -->
+    <div id="map"></div>
 
-  <form id="weatherForm">
-    <label for="date">Choose Date:</label>
-    <input type="date" id="date" name="date" required>
-    <input type="hidden" id="lat" name="lat">
-    <input type="hidden" id="lon" name="lon">
-    <button type="submit">Get Weather</button>
-  </form>
+    <!-- Form -->
+    <form id="weatherForm">
+      <label for="date">Choose Date:</label>
+      <input type="date" id="date" name="date" required>
+
+      <label for="time">Choose Time:</label>
+      <input type="time" id="time" name="time" required>
+
+      <!-- Hidden inputs for map coordinates -->
+      <input type="hidden" id="lat" name="lat">
+      <input type="hidden" id="lon" name="lon">
+
+      <button type="submit">Get Weather</button>
+    </form>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
