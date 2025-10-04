@@ -8,30 +8,58 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 </head>
 <body>
-  <div class="container" id="cntn">
-    <h2>Pick a Location, Date & Time</h2>
-    
-    <!-- Map -->
-    <div id="map"></div>
 
-    <!-- Form -->
-<form id="weatherForm">
-  <label for="location">Enter Location (City, Place, etc.):</label>
-  <input type="text" id="location" name="location" placeholder="Type a city or place">
+  <div class="cntnt">
 
-  <label for="date">Choose Date:</label>
-  <input type="date" id="date" name="date" required>
+    <!-- Header -->
+    <header class="page-header">
+      <div class="container">
+        <h1>Weather Probability Predictor</h1>
+        <p>Get insights into probable weather conditions based on historical and live data for any location, date, and time.</p>
+        <p>Use the website to obtain probable weather conditions for a location at a specific period into the future using past weather and climatic changes.</p>
+        <p style="font-size:0.9rem; color:#cce7ff;">Use the map or type a location to select your desired point.</p>
+      </div>
+    </header>
 
-  <label for="time">Choose Time:</label>
-  <input type="time" id="time" name="time" required>
+    <!-- Main Container -->
+    <div class="container" id="cntn">
+      <h2>Pick a Location, Date & Time</h2>
 
-  <!-- Hidden inputs for map coordinates -->
-  <input type="hidden" id="lat" name="lat">
-  <input type="hidden" id="lon" name="lon">
+      <!-- Map -->
+      <div id="map" style="height: 400px; margin: 20px 0;"></div>
 
-  <button type="submit">Get Weather</button>
-</form>
+      <!-- Form -->
+      <form id="weatherForm">
+        <label for="location">Enter Location (City, Place, etc.):</label>
+        <input type="text" id="location" name="location" placeholder="Type a city or place">
 
+        <label for="date">Choose Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="time">Choose Time:</label>
+        <input type="time" id="time" name="time" required>
+
+        <!-- Hidden inputs for map coordinates -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lon" name="lon">
+
+        <button type="submit">Get Weather</button>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div class="container">
+        <p>Thank you for using the Probable Weather Forecast tool.</p>
+        <p>Data and APIs used: NASA POWER API, OpenWeatherMap.</p>
+        <p>Libraries used: Leaflet.js, Chart.js.</p>
+        <p>Maps and geographical data: OpenStreetMap.</p>
+        <p>Website designed and developed with assistance from ChatGPT by OpenAI.</p>
+        <p>&copy; 2025 YourName. All rights reserved.</p>
+      </div>
+    </footer>
+
+  </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="script.js"></script>

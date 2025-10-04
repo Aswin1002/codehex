@@ -8,17 +8,26 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Probable Weather Forecast</h1>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="container">
+      <h1>Probable Weather Forecast</h1>
+      <p>Visualize likely weather conditions for your selected location, date, and time based on historical and live data.</p>
+      <p style="font-size:0.9rem; color:#cce7ff;">Scroll down to view detailed metrics and charts for temperature, humidity, wind, and general conditions.</p>
+    </div>
+  </header>
+
+  <!-- Main Output Container -->
   <div id="results" class="output-container">Loading...</div>
-  
 
   <!-- Cards Container -->
   <div class="cards-container">
-<div class="card" id="locationCard">
-  <h2>Location</h2>
-  <p id="locName">Loading...</p>
-  <p id="locDescription" style="margin-top:10px; font-style:italic; text-align:center; color:#00ffe0;">Loading description...</p>
-</div>
+    <div class="card" id="locationCard">
+      <h2>Location</h2>
+      <p id="locName">Loading...</p>
+      <p id="locDescription" style="margin-top:10px; font-style:italic; text-align:center; color:#00ffe0;">Loading description...</p>
+    </div>
 
     <div class="card" id="tempCard">
       <h2>Temperature</h2>
@@ -39,13 +48,23 @@
       <h2>Probable Conditions</h2>
       <canvas id="conditionChart"></canvas>
     </div>
-    
   </div>
 
   <div class="download-section">
     <button id="downloadJson" class="download-btn">Download as JSON</button>
   </div>
-</div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="container">
+      <p>Thank you for using the Probable Weather Forecast tool.</p>
+    <p>Data and APIs used: NASA POWER API, OpenWeatherMap.</p>
+    <p>Libraries used: Leaflet.js, Chart.js.</p>
+    <p>Maps and geographical data: OpenStreetMap.</p>
+    <p>Website designed and developed with assistance from ChatGPT by OpenAI.</p>
+    <p>&copy; 2025 YourName. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="scrp.js"></script>
 </body>
