@@ -85,5 +85,5 @@ document.getElementById('weatherForm').addEventListener('submit', function(e) {
   const isToday = (inputDate.toDateString() === today.toDateString());
 
   // Append a flag in URL to indicate live data or historical
-  window.location.href = `../output_page/index.html?lat=${lat}&lon=${lon}&date=${date}&time=${time}&live=${isToday}`;
+  window.location.href = `./output_page/index.html?lat=${lat}&lon=${lon}&date=${date}&time=${time}&live=${isToday}`;
 });
