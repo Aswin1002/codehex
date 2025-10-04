@@ -15,20 +15,23 @@
     <div id="map"></div>
 
     <!-- Form -->
-    <form id="weatherForm">
-      <label for="date">Choose Date:</label>
-      <input type="date" id="date" name="date" required>
+<form id="weatherForm">
+  <label for="location">Enter Location (City, Place, etc.):</label>
+  <input type="text" id="location" name="location" placeholder="Type a city or place">
 
-      <label for="time">Choose Time:</label>
-      <input type="time" id="time" name="time" required>
+  <label for="date">Choose Date:</label>
+  <input type="date" id="date" name="date" required>
 
-      <!-- Hidden inputs for map coordinates -->
-      <input type="hidden" id="lat" name="lat">
-      <input type="hidden" id="lon" name="lon">
+  <label for="time">Choose Time:</label>
+  <input type="time" id="time" name="time" required>
 
-      <button type="submit">Get Weather</button>
-    </form>
-  </div>
+  <!-- Hidden inputs for map coordinates -->
+  <input type="hidden" id="lat" name="lat">
+  <input type="hidden" id="lon" name="lon">
+
+  <button type="submit">Get Weather</button>
+</form>
+
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="script.js"></script>
