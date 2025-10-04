@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Results</title>
+  <title>Probable Weather Forecast</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h2>Weather Forecast</h2>
+  <h1>Probable Weather Forecast</h1>
   <div id="results">Loading...</div>
+
+  <div class="charts">
+    <canvas id="tempChart" width="400" height="200"></canvas>
+    <canvas id="humidityChart" width="400" height="200"></canvas>
+    <canvas id="windChart" width="400" height="200"></canvas>
+    <canvas id="conditionChart" width="400" height="200"></canvas>
+  </div>
 
   <script src="scrp.js"></script>
 </body>

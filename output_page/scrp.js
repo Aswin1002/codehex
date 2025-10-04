@@ -3,32 +3,20 @@ const urlParams = new URLSearchParams(window.location.search);
 const lat = urlParams.get("lat");
 const lon = urlParams.get("lon");
 const date = urlParams.get("date"); // YYYY-MM-DD
-const time = urlParams.get("time"); // HH:MM
 const resultsDiv = document.getElementById("results");
 
 // --- Helpers ---
 const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
 
-function classifyWeather(temp, wind, humidity) {
-    let condition = "Clear";
-    if (wind > 10) condition = "Windy";
-    else if (temp > 35) condition = "Very Hot";
-    else if (temp < 5) condition = "Very Cold";
-    else if (humidity > 80) condition = "Humid";
-    return condition;
+function classifyWeather(temp, wind, humidity) {  
+    if (wind > 10) return "Windy";
+    if (temp > 35) return "Very Hot";
+    if (temp < 5) return "Very Cold";
+    if (humidity > 80) return "Humid";
+    return "Clear";
 }
 
-async function getLocationName(lat, lon) {
-    try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-        const data = await res.json();
-        return data.address.city || data.address.town || data.address.village || data.address.state || `${lat}, ${lon}`;
-    } catch {
-        return `${lat}, ${lon}`;
-    }
-}
-
-// --- NASA POWER API fetch function ---
+// --- Fetch NASA POWER historical data ---
 async function fetchNASAData(lat, lon, dateStr) {
     const inputDate = new Date(dateStr);
     const month = inputDate.getMonth() + 1;
@@ -47,83 +35,123 @@ async function fetchNASAData(lat, lon, dateStr) {
     return await Promise.all(fetchPromises);
 }
 
-// --- GIBS / GPM Image URL Helper ---
-function getSatelliteImageURL(lat, lon) {
-    // Example: NASA GIBS Blue Marble Cloud Layer (static for simplicity)
-    // You can replace with actual GIBS WMTS tiles for interactive maps
-    return `https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&STYLES=&FORMAT=image/png&TRANSPARENT=TRUE&HEIGHT=300&WIDTH=300&BBOX=${lat-1},${lon-1},${lat+1},${lon+1}&CRS=EPSG:4326`;
-}
-
-// --- Display function ---
-async function displayWeather() {
+// --- Main function ---
+async function displayForecast() {
     if (!lat || !lon || !date) {
         resultsDiv.innerHTML = "Please provide latitude, longitude, and date.";
         return;
     }
 
-    const locationName = await getLocationName(lat, lon);
-    const inputDate = new Date(date);
-    const isToday = inputDate.toDateString() === new Date().toDateString();
-
-    let tempAvg=0, windAvg=0, humidityAvg=0;
+    resultsDiv.innerHTML = "Loading data from NASA POWER API...";
 
     try {
-        // --- Fetch historical data ---
         const responses = await fetchNASAData(lat, lon, date);
-        console.log(responses);
+
         let temps=[], winds=[], humidities=[];
+        let conditionCounts = {Clear:0, Windy:0, "Very Hot":0, "Very Cold":0, Humid:0};
+        let years = [];
+
         for (let resp of responses) {
             const weather = resp.data.properties?.parameter;
             if (!weather) continue;
 
-            const tKeys = Object.keys(weather.T2M||{});
-            if(tKeys.length) temps.push(weather.T2M[tKeys[0]]);
+            const tVal = weather.T2M ? Object.values(weather.T2M)[0] : null;
+            const wVal = weather.WS2M ? Object.values(weather.WS2M)[0] : null;
+            const hVal = weather.RH2M ? Object.values(weather.RH2M)[0] : null;
 
-            const wKeys = Object.keys(weather.WS2M||{});
-            if(wKeys.length) winds.push(weather.WS2M[wKeys[0]]);
+            if (tVal !== null) temps.push(tVal);
+            if (wVal !== null) winds.push(wVal);
+            if (hVal !== null) humidities.push(hVal);
 
-            const hKeys = Object.keys(weather.RH2M||{});
-            if(hKeys.length) humidities.push(weather.RH2M[hKeys[0]]);
+            if (tVal !== null && wVal !== null && hVal !== null) {
+                const condition = classifyWeather(tVal, wVal, hVal);
+                conditionCounts[condition]++;
+            }
+
+            years.push(resp.year);
         }
 
-        tempAvg = avg(temps).toFixed(1);
-        windAvg = avg(winds).toFixed(1);
-        humidityAvg = avg(humidities).toFixed(1);
+        // --- Display numeric averages ---
+        const tempAvg = avg(temps).toFixed(1);
+        const windAvg = avg(winds).toFixed(1);
+        const humidityAvg = avg(humidities).toFixed(1);
 
-        const condition = classifyWeather(tempAvg, windAvg, humidityAvg);
-
-        // --- Satellite Image URL ---
-        const satImgURL = getSatelliteImageURL(parseFloat(lat), parseFloat(lon));
-
-        // --- Display Cards ---
         resultsDiv.innerHTML = `
             <div class="output">
-                <div class="card">
-                    <h2>Location & Time</h2>
-                    <p><b>Location:</b> ${locationName}</p>
-                    <p><b>Date:</b> ${date}</p>
-                    <p><b>Time:</b> ${time || "N/A"}</p>
-                </div>
-                <div class="card">
-                    <h2>Temperature & Humidity</h2>
-                    <p><b>Average Temperature:</b> ${tempAvg} °C</p>
-                    <p><b>Average Humidity:</b> ${humidityAvg} %</p>
-                </div>
-                <div class="card">
-                    <h2>Wind & Condition</h2>
-                    <p><b>Average Wind Speed:</b> ${windAvg} m/s</p>
-                    <p><b>Condition:</b> ${condition}</p>
-                </div>
-                <div class="card">
-                    <h2>Satellite View</h2>
-                    <img src="${satImgURL}" alt="Satellite Image" style="width:100%;border-radius:12px;"/>
-                </div>
+                <p><b>Latitude:</b> ${lat}, <b>Longitude:</b> ${lon}</p>
+                <p><b>Date:</b> ${date}</p>
+                <p><b>Average Temp:</b> ${tempAvg} °C</p>
+                <p><b>Average Wind:</b> ${windAvg} m/s</p>
+                <p><b>Average Humidity:</b> ${humidityAvg} %</p>
             </div>
         `;
+
+        // --- Chart.js graphs ---
+        // Temperature trend
+        new Chart(document.getElementById('tempChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temps,
+                    borderColor: '#ff6384',
+                    backgroundColor: 'rgba(255,99,132,0.2)',
+                    fill: true
+                }]
+            },
+            options: { responsive:true, plugins:{legend:{display:true}} }
+        });
+
+        // Humidity trend
+        new Chart(document.getElementById('humidityChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidities,
+                    borderColor: '#36a2eb',
+                    backgroundColor: 'rgba(54,162,235,0.2)',
+                    fill: true
+                }]
+            }
+        });
+
+        // Wind trend
+        new Chart(document.getElementById('windChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Wind Speed (m/s)',
+                    data: winds,
+                    borderColor: '#ffce56',
+                    backgroundColor: 'rgba(255,206,86,0.2)',
+                    fill: true
+                }]
+            }
+        });
+
+        // Probable weather conditions (pie chart)
+        new Chart(document.getElementById('conditionChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(conditionCounts),
+                datasets: [{
+                    label: 'Condition Frequency',
+                    data: Object.values(conditionCounts),
+                    backgroundColor: [
+                        '#36a2eb', '#ff6384', '#ffce56', '#8a2be2', '#00ff7f'
+                    ]
+                }]
+            }
+        });
+
     } catch (err) {
         console.error(err);
-        resultsDiv.innerHTML = "Error fetching weather data from NASA APIs.";
+        resultsDiv.innerHTML = "Error fetching data from NASA POWER API.";
     }
 }
 
-displayWeather();
+displayForecast();
