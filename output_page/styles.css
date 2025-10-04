@@ -1,116 +1,125 @@
-/* --- General Page Setup --- */
 body {
-  margin: 0;
-  padding: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #0a0f14, #1a2230); /* Dark ambient gradient */
+  background: linear-gradient(135deg, #141E30, #243B55);
   color: #f5f7fa;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 40px 20px;
+  padding: 20px;
+  min-height: 100vh;
 }
-
-/* --- Page Header --- */
-h1 {
-  color: #00fff7; /* vibrant cyan */
-  margin-bottom: 40px;
+.page-header {
+  width: 100%;
+  padding: 25px 0;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
   text-align: center;
-  letter-spacing: 1px;
-  font-size: 2rem;
-  text-shadow: 0 0 10px #00fff7, 0 0 20px rgba(0, 255, 247, 0.3);
 }
 
-/* --- Output Container --- */
-.output {
+.page-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+  font-size: 1rem;
+  color: #cce7ff;
+}
+h1 {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 2rem;
+  color: #00e0ff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+/* Container for all cards */
+.cards-container {
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
   justify-content: center;
-  align-items: stretch;
-  gap: 25px;
   width: 90%;
-  max-width: 1000px;
-  margin: 20px auto;
-  animation: fadeIn 0.8s ease-in-out;
 }
 
-/* --- Card Styling --- */
+/* Individual Card */
 .card {
-  flex: 1;
-  min-width: 280px;
-  max-width: 300px;
-  background: rgba(20, 30, 50, 0.25); /* Dark glass effect */
+  background: rgba(255,255,255,0.12);
   border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 8px 32px rgba(0, 255, 247, 0.15);
+  padding: 20px;
+  min-width: 280px;
+  max-width: 400px;
+  flex: 1 1 300px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.37);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 255, 247, 0.3);
+  border: 1px solid rgba(255,255,255,0.18);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 20px #00fff7, 0 0 40px rgba(0, 255, 247, 0.5);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
 }
 
-/* --- Card Titles --- */
 .card h2 {
   font-size: 1.3rem;
-  color: #00fff7; /* cyan glow */
-  margin-bottom: 15px;
-  border-bottom: 1px solid rgba(0, 255, 247, 0.3);
-  padding-bottom: 5px;
+  color: #00e0ff;
+  margin-bottom: 10px;
   text-align: center;
-  text-shadow: 0 0 8px #00fff7, 0 0 16px rgba(0, 255, 247, 0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 5px;
 }
 
-/* --- Text Styling --- */
 .card p {
   font-size: 1rem;
-  color: #e4e6eb;
-  margin: 10px 0;
-  text-shadow: 0 0 3px rgba(0, 255, 247, 0.2);
+  text-align: center;
+  margin: 5px 0;
+  color: #f5f7fa;
 }
 
-.card p b {
-  color: #ffffff;
-}
-
-.loctn {
-  color: #00f2ff;
-  text-shadow: 0 0 8px rgba(0, 255, 247, 0.5);
-}
-
-/* --- Satellite / Graph Images --- */
-.card img, .card canvas {
-  width: 100%;
-  border-radius: 12px;
+/* Canvas for charts */
+canvas {
   margin-top: 10px;
-  box-shadow: 0 4px 15px rgba(0, 255, 247, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card img:hover, .card canvas:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(0, 255, 247, 0.5);
-}
-
-/* --- Animation --- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- Responsive --- */
+/* Responsive */
 @media (max-width: 800px) {
-  .output {
+  .cards-container {
     flex-direction: column;
     align-items: center;
   }
-  .card {
-    width: 90%;
-    max-width: none;
-  }
+  .card { width: 90%; }
+}
+
+.download-btn {
+  background-color: #00bfa5;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #00997c;
+}
+
+.page-footer {
+  width: 100%;
+  padding: 20px 0;
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  color: #fff;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.page-footer p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #dcdcdc;
 }

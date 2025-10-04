@@ -9,14 +9,43 @@
 </head>
 <body>
   <h1>Probable Weather Forecast</h1>
-  <div id="results">Loading...</div>
+  <div id="results" class="output-container">Loading...</div>
+  
 
-  <div class="charts">
-    <canvas id="tempChart" width="400" height="200"></canvas>
-    <canvas id="humidityChart" width="400" height="200"></canvas>
-    <canvas id="windChart" width="400" height="200"></canvas>
-    <canvas id="conditionChart" width="400" height="200"></canvas>
+  <!-- Cards Container -->
+  <div class="cards-container">
+<div class="card" id="locationCard">
+  <h2>Location</h2>
+  <p id="locName">Loading...</p>
+  <p id="locDescription" style="margin-top:10px; font-style:italic; text-align:center; color:#00ffe0;">Loading description...</p>
+</div>
+
+    <div class="card" id="tempCard">
+      <h2>Temperature</h2>
+      <p id="tempAvg">Loading...</p>
+      <canvas id="tempChart"></canvas>
+    </div>
+    <div class="card" id="humidityCard">
+      <h2>Humidity</h2>
+      <p id="humidityAvg">Loading...</p>
+      <canvas id="humidityChart"></canvas>
+    </div>
+    <div class="card" id="windCard">
+      <h2>Wind</h2>
+      <p id="windAvg">Loading...</p>
+      <canvas id="windChart"></canvas>
+    </div>
+    <div class="card" id="conditionCard">
+      <h2>Probable Conditions</h2>
+      <canvas id="conditionChart"></canvas>
+    </div>
+    
   </div>
+
+  <div class="download-section">
+    <button id="downloadJson" class="download-btn">Download as JSON</button>
+  </div>
+</div>
 
   <script src="scrp.js"></script>
 </body>
