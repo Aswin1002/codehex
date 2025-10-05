@@ -120,11 +120,11 @@ async function displayForecast() {
 
     let descriptionText = "";
     switch (overallCondition) {
-        case "Clear": descriptionText = "The weather is likely to be clear and pleasant."; break;
-        case "Windy": descriptionText = "Expect breezy or windy conditions during this time."; break;
-        case "Very Hot": descriptionText = "Temperatures are likely to be very high; stay hydrated!"; break;
-        case "Very Cold": descriptionText = "The weather may be quite cold; warm clothing is advised."; break;
-        case "Humid": descriptionText = "High humidity levels expected; it may feel muggy."; break;
+        case "Clear": descriptionText = "CLEAR:The weather is likely to be clear and pleasant."; break;
+        case "Windy": descriptionText = "WINDY:Expect breezy or windy conditions during this time."; break;
+        case "Very Hot": descriptionText = "VERY HOT:Temperatures are likely to be very high; stay hydrated!"; break;
+        case "Very Cold": descriptionText = "VERY COLD:The weather may be quite cold; warm clothing is advised."; break;
+        case "Humid": descriptionText = "HUMID:High humidity levels expected; it may feel muggy."; break;
     }
 
     // --- Update UI ---
