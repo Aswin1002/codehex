@@ -7,6 +7,24 @@ const date = urlParams.get("date"); // YYYY-MM-DD
 // --- Helper functions ---
 const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
 
+// Weighted average: weights recent years more
+function weightedAverage(values, weights) {
+    const totalWeight = weights.reduce((a,b)=>a+b,0);
+    return values.reduce((sum, val, i) => sum + val * weights[i], 0) / totalWeight;
+}
+
+// Simple linear regression for trend estimation
+function linearTrend(x, y) {
+    const n = x.length;
+    const meanX = avg(x);
+    const meanY = avg(y);
+    const numerator = x.reduce((sum, xi, i) => sum + (xi - meanX)*(y[i] - meanY), 0);
+    const denominator = x.reduce((sum, xi) => sum + Math.pow(xi - meanX, 2), 0);
+    const slope = numerator / denominator;
+    const intercept = meanY - slope * meanX;
+    return { slope, intercept };
+}
+
 function classifyWeather(temp, wind, humidity) {  
     if (wind > 10) return "Windy";
     if (temp > 35) return "Very Hot";
@@ -31,7 +49,7 @@ async function fetchNASAData(lat, lon, dateStr) {
     const month = inputDate.getMonth() + 1;
     const day = inputDate.getDate();
     const currentYear = new Date().getFullYear();
-    const yearsBack = 20;
+    const yearsBack = 5;
 
     const fetchPromises = [];
     for (let y = currentYear - yearsBack; y <= currentYear - 1; y++) {
@@ -51,8 +69,8 @@ async function displayForecast() {
     const locationName = await getLocationName(lat, lon);
     const responses = await fetchNASAData(lat, lon, date);
 
-    let temps=[], winds=[], humidities=[];
-    let conditionCounts = {Clear:0, Windy:0, "Very Hot":0, "Very Cold":0, Humid:0};
+    let temps = [], winds = [], humidities = [];
+    let conditionCounts = { Clear:0, Windy:0, "Very Hot":0, "Very Cold":0, Humid:0 };
     let years = [];
 
     for (let resp of responses) {
@@ -75,15 +93,33 @@ async function displayForecast() {
         years.push(resp.year);
     }
 
-    // --- Averages ---
-    const tempAvg = avg(temps).toFixed(1);
-    const windAvg = avg(winds).toFixed(1);
-    const humidityAvg = avg(humidities).toFixed(1);
+    // --- Weight setup: more recent years have higher weights ---
+    const weights = years.map((_, i) => i + 1);
+
+    // --- Weighted averages ---
+    const tempWeighted = weightedAverage(temps, weights);
+    const windWeighted = weightedAverage(winds, weights);
+    const humidityWeighted = weightedAverage(humidities, weights);
+
+    // --- Trend-based projection (predict for next year) ---
+    const tempTrend = linearTrend(years, temps);
+    const windTrend = linearTrend(years, winds);
+    const humidityTrend = linearTrend(years, humidities);
+
+    const nextYear = Math.max(...years) + 1;
+    const projectedTemp = tempTrend.intercept + tempTrend.slope * nextYear;
+    const projectedWind = windTrend.intercept + windTrend.slope * nextYear;
+    const projectedHumidity = humidityTrend.intercept + humidityTrend.slope * nextYear;
+
+    // --- Combine weighted + trend for more robust estimate ---
+    const tempAvg = ((tempWeighted + projectedTemp) / 2).toFixed(1);
+    const windAvg = ((windWeighted + projectedWind) / 2).toFixed(1);
+    const humidityAvg = ((humidityWeighted + projectedHumidity) / 2).toFixed(1);
 
     const overallCondition = classifyWeather(tempAvg, windAvg, humidityAvg);
 
     let descriptionText = "";
-    switch(overallCondition) {
+    switch (overallCondition) {
         case "Clear": descriptionText = "The weather is likely to be clear and pleasant."; break;
         case "Windy": descriptionText = "Expect breezy or windy conditions during this time."; break;
         case "Very Hot": descriptionText = "Temperatures are likely to be very high; stay hydrated!"; break;
@@ -93,12 +129,14 @@ async function displayForecast() {
 
     // --- Update UI ---
     document.getElementById('locName').innerText = locationName;
+    document.getElementById('locDate').innerText = `📅 On date: ${date}`;
     document.getElementById('locDescription').innerText = descriptionText;
-    document.getElementById('tempAvg').innerText = `Average: ${tempAvg} °C`;
-    document.getElementById('humidityAvg').innerText = `Average: ${humidityAvg} %`;
-    document.getElementById('windAvg').innerText = `Average: ${windAvg} m/s`;
+    document.getElementById('tempAvg').innerText = `Estimated Avg: ${tempAvg} °C`;
+    document.getElementById('humidityAvg').innerText = `Estimated Avg: ${humidityAvg} %`;
+    document.getElementById('windAvg').innerText = `Estimated Avg: ${windAvg} m/s`;
 
     // --- Chart Rendering ---
+    Chart.defaults.color = '#ffffff';
     new Chart(document.getElementById('tempChart'), {
         type: 'line',
         data: { labels: years, datasets: [{ label:'Temperature (°C)', data: temps, borderColor:'#ff6384', backgroundColor:'rgba(255,99,132,0.2)', fill:true }] }
@@ -126,6 +164,7 @@ async function displayForecast() {
         date,
         description: descriptionText,
         averages: { temperature: tempAvg, windSpeed: windAvg, humidity: humidityAvg },
+        trendSlopes: { tempTrend: tempTrend.slope, windTrend: windTrend.slope, humidityTrend: humidityTrend.slope },
         yearlyData: years.map((y,i)=>({
             year: y,
             temperature: temps[i],
@@ -135,20 +174,33 @@ async function displayForecast() {
         probableConditions: conditionCounts
     };
 
-    // --- Add download button ---
-    const downloadBtn = document.createElement("button");
-    downloadBtn.textContent = "⬇ Download JSON";
-    downloadBtn.className = "download-btn";
-    downloadBtn.onclick = () => {
-        const blob = new Blob([JSON.stringify(weatherData, null, 2)], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${locationName.replace(/\s+/g,'_')}_${date}_weather.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-    };
-    document.getElementById("downloadContainer").appendChild(downloadBtn);
+    // --- Attach download to existing button ---
+    const downloadButton = document.getElementById("downloadJson");
+    if (downloadButton) {
+        downloadButton.addEventListener("click", () => {
+            try {
+                const jsonStr = JSON.stringify(weatherData, null, 2);
+                const blob = new Blob([jsonStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+
+                const safeLocation = (locationName || "location").replace(/[^\w\-_. ]+/g, "_");
+                const safeDate = (date || "date").replace(/[^\w\-_. ]+/g, "_");
+                const filename = `${safeLocation}_${safeDate}_weather.json`;
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (err) {
+                console.error("Download failed:", err);
+                alert("Failed to download JSON — check console for details.");
+            }
+        });
+    }
 }
 
 displayForecast();

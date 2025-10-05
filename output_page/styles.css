@@ -123,3 +123,10 @@ canvas {
   font-size: 0.9rem;
   color: #dcdcdc;
 }
+
+#locDate {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-top: -5px;
+  margin-bottom: 8px;
+}
